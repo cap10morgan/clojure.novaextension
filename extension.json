@@ -1,0 +1,7 @@
+{
+    "identifier": "org.clojure",
+    "name": "clojure",
+    "description": "Clojure language definition",
+    "version": "1.0",
+    "categories": ["languages"]
+}
