@@ -10,15 +10,6 @@
     <extension priority="1.0">clj,cljs,cljc,cljx,edn,boot</extension>
   </detectors>
 
-  <indentation>
-    <increase>
-      <expression>^\s*&lt;(([^!/?]|%)(?!.+?([/%]&gt;|&lt;/.+?&gt;))|[%!]--\s*$)</expression>
-    </increase>
-    <decrease>
-      <expression>^\s*(&lt;/[^&gt;]+&gt;|--&gt;|--%&gt;)</expression>
-    </decrease>
-  </indentation>
-
   <comments>
     <single>
       <expression>;</expression>
