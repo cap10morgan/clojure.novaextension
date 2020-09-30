@@ -803,7 +803,7 @@
         <expression>(?&lt;=[^&apos;]\()(?:/|(?:[A-Za-zÀ-ÖØ-öø-ÿ*+!\-_&apos;?&lt;&gt;=][A-Za-zÀ-ÖØ-öø-ÿ0-9*+!\-_&apos;?&lt;&gt;=.]*/)?[A-Za-zÀ-ÖØ-öø-ÿ*+!\-_&apos;?&lt;&gt;=][A-Za-zÀ-ÖØ-öø-ÿ0-9*+!\-_&apos;?&lt;&gt;=.]*)</expression>
       </scope>
       <scope name="clojure.identifier.variable">
-        <expression>\b[A-Za-zÀ-ÖØ-öø-ÿ*+!\-_'?&lt;&gt;=][A-Za-zÀ-ÖØ-öø-ÿ0-9*+!\-_'?&lt;&gt;=]*\b</expression>
+        <expression>[A-Za-zÀ-ÖØ-öø-ÿ*+!\-_'?&lt;&gt;=][A-Za-zÀ-ÖØ-öø-ÿ0-9*+!\-_'?&lt;&gt;=]*</expression>
       </scope>
     </collection>
 
@@ -827,6 +827,7 @@
         <expression>[\(\{\[\)\}\]]</expression>
       </scope>
     </collection>
+
   </collections>
 
 </syntax>
