@@ -1,7 +1,10 @@
 {
-    "identifier": "org.clojure",
-    "name": "clojure",
-    "description": "Clojure language definition",
-    "version": "1.0",
-    "categories": ["languages"]
+  "identifier": "org.clojure",
+  "name": "clojure",
+  "organization": "cap10morgan",
+  "description": "Clojure language definition",
+  "version": "1.0",
+  "categories": ["languages"],
+  "bugs": "https://github.com/cap10morgan/clojure.novaextension/issues",
+  "repository": "https://github.com/cap10morgan/clojure.novaextension"
 }
