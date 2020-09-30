@@ -154,6 +154,9 @@
           something like
           https://github.com/jafingerhut/clojure-cheatsheets/blob/master/src/clj-jvm/src/generator/core.clj -->
 
+          <!-- For now this is just most of the basic lowercase symbols from
+          https://clojure.github.io/clojure/clojure.core-api.html -->
+
           <string>accessor</string>
           <string>aclone</string>
           <string>add-classpath</string>
