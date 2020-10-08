@@ -1,7 +1,7 @@
 {
-  "identifier": "org.clojure",
+  "identifier": "com.timetraveltoaster.clojure",
   "name": "clojure",
-  "organization": "com.timetraveltoaster",
+  "organization": "Wes Morgan",
   "description": "Clojure language definition",
   "version": "1.0",
   "categories": ["languages"],
