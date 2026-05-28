@@ -1,10 +1,162 @@
 {
-  "identifier": "com.timetraveltoaster.clojure",
-  "name": "clojure",
-  "organization": "Wes Morgan",
-  "description": "Clojure language definition",
-  "version": "1.0",
-  "categories": ["languages"],
-  "bugs": "https://github.com/cap10morgan/clojure.novaextension/issues",
-  "repository": "https://github.com/cap10morgan/clojure.novaextension"
+    "identifier": "com.timetraveltoaster.clojure",
+    "name": "Clojure",
+    "organization": "Time Travel Toaster",
+    "description": "Clojure and ClojureScript language support powered by clojure-lsp: completion, diagnostics, go-to-definition, find references, rename, formatting, and refactorings.",
+    "version": "2.0.0",
+    "categories": [
+        "languages",
+        "completions",
+        "formatters",
+        "issues"
+    ],
+    "license": "MIT",
+    "repository": "https://github.com/cap10morgan/clojure.novaextension",
+    "bugs": "https://github.com/cap10morgan/clojure.novaextension/issues",
+    "main": "main.js",
+    "min_runtime": "10.0",
+    "entitlements": {
+        "process": true,
+        "filesystem": "readwrite"
+    },
+    "activationEvents": [
+        "onLanguage:clojure",
+        "onWorkspaceContains:deps.edn",
+        "onWorkspaceContains:project.clj",
+        "onWorkspaceContains:bb.edn",
+        "onWorkspaceContains:shadow-cljs.edn",
+        "onWorkspaceContains:*.clj",
+        "onWorkspaceContains:*.cljs",
+        "onWorkspaceContains:*.cljc"
+    ],
+    "config": [
+        {
+            "key": "clojureLsp.enable",
+            "title": "Enable clojure-lsp",
+            "description": "Run the clojure-lsp language server for Clojure files.",
+            "type": "boolean",
+            "default": true
+        },
+        {
+            "key": "clojureLsp.path",
+            "title": "clojure-lsp executable path",
+            "description": "Absolute path to the clojure-lsp binary. Leave blank to look it up on your PATH or auto-download it.",
+            "type": "path",
+            "placeholder": "/opt/homebrew/bin/clojure-lsp"
+        },
+        {
+            "key": "clojureLsp.trace.server",
+            "title": "Server trace",
+            "description": "Trace the communication between Nova and the language server (shown in the Extension Console).",
+            "type": "enum",
+            "values": ["off", "messages", "verbose"],
+            "default": "off"
+        },
+        {
+            "key": "clojureLsp.languageServer",
+            "title": "Language server management",
+            "description": "How clojure-lsp is provided. \"Bundled\" lets this extension launch and auto-install it (works on all supported Nova versions). \"Nova-managed\" defers to Nova 14's built-in language server management — install clojure-lsp from Settings → Languages — and this extension will not launch its own server. On Nova 13 and earlier, \"Nova-managed\" falls back to the bundled server.",
+            "type": "enum",
+            "values": [
+                ["bundled", "Bundled (this extension)"],
+                ["nova", "Nova-managed (Nova 14+)"]
+            ],
+            "default": "bundled"
+        },
+        {
+            "key": "clojureLsp.formatOnSave",
+            "title": "Format on save",
+            "description": "Automatically format Clojure files with clojure-lsp (cljfmt) when they are saved.",
+            "type": "boolean",
+            "default": false
+        },
+        {
+            "key": "clojureLsp.cljfmtConfigPath",
+            "title": "cljfmt config path",
+            "description": "Path to a cljfmt configuration file, forwarded to clojure-lsp. Relative to the project root or absolute. Leave blank to use clojure-lsp's own config (.lsp/config.edn).",
+            "type": "path",
+            "placeholder": "cljfmt.edn"
+        }
+    ],
+    "configWorkspace": [
+        {
+            "key": "clojureLsp.enable",
+            "title": "Enable clojure-lsp",
+            "description": "Run the clojure-lsp language server for Clojure files in this workspace.",
+            "type": "enum",
+            "values": [
+                ["null", "Inherit from Global Settings"],
+                ["true", "Enable"],
+                ["false", "Disable"]
+            ],
+            "default": "null"
+        },
+        {
+            "key": "clojureLsp.path",
+            "title": "clojure-lsp executable path",
+            "description": "Absolute path to the clojure-lsp binary for this workspace. Overrides the global setting.",
+            "type": "path",
+            "placeholder": "Inherit from Global Settings"
+        },
+        {
+            "key": "clojureLsp.languageServer",
+            "title": "Language server management",
+            "description": "How clojure-lsp is provided for this workspace. Overrides the global setting.",
+            "type": "enum",
+            "values": [
+                ["inherit", "Inherit from Global Settings"],
+                ["bundled", "Bundled (this extension)"],
+                ["nova", "Nova-managed (Nova 14+)"]
+            ],
+            "default": "inherit"
+        },
+        {
+            "key": "clojureLsp.formatOnSave",
+            "title": "Format on save",
+            "description": "Automatically format Clojure files on save in this workspace.",
+            "type": "enum",
+            "values": [
+                ["null", "Inherit from Global Settings"],
+                ["true", "Enable"],
+                ["false", "Disable"]
+            ],
+            "default": "null"
+        },
+        {
+            "key": "clojureLsp.cljfmtConfigPath",
+            "title": "cljfmt config path",
+            "description": "Path to a cljfmt configuration file for this workspace, forwarded to clojure-lsp. Overrides the global setting.",
+            "type": "path",
+            "placeholder": "Inherit from Global Settings"
+        }
+    ],
+    "commands": {
+        "editor": [
+            {
+                "title": "Rename Symbol",
+                "command": "clojureLsp.rename",
+                "filters": {
+                    "syntaxes": ["clojure"]
+                }
+            },
+            {
+                "title": "Format Document",
+                "command": "clojureLsp.formatDocument",
+                "filters": {
+                    "syntaxes": ["clojure"]
+                }
+            },
+            {
+                "title": "Clean Namespace (clojure-lsp)",
+                "command": "clojureLsp.cleanNamespace",
+                "filters": {
+                    "syntaxes": ["clojure"]
+                }
+            },
+            {
+                "title": "Restart clojure-lsp Server",
+                "command": "clojureLsp.restart"
+            }
+        ]
+    }
 }

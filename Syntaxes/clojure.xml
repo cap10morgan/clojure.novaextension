@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<syntax name="clojure">
+    <meta>
+        <name>Clojure</name>
+        <type>structured</type>
+        <preferred-file-extension>clj</preferred-file-extension>
+        <scriptable shebang="#!/usr/bin/env bb" />
+    </meta>
+
+    <detectors>
+        <extension priority="1.0">clj,cljs,cljc,cljx,edn,bb</extension>
+        <filename priority="0.8">deps.edn</filename>
+        <filename priority="0.8">bb.edn</filename>
+        <filename priority="0.8">project.clj</filename>
+    </detectors>
+
+    <indentation>
+        <increase>
+            <expression>(\{|\[|\()[^}\])"']*$</expression>
+        </increase>
+        <decrease>
+            <expression>^\s*[\}\]\)]</expression>
+        </decrease>
+    </indentation>
+
+    <comments>
+        <single>
+            <expression>;</expression>
+        </single>
+    </comments>
+
+    <brackets>
+        <pair open="(" close=")" />
+        <pair open="[" close="]" />
+        <pair open="{" close="}" />
+    </brackets>
+
+    <surrounding-pairs>
+        <pair open="(" close=")" />
+        <pair open="[" close="]" />
+        <pair open="{" close="}" />
+        <pair open="&quot;" close="&quot;" />
+    </surrounding-pairs>
+
+    <scopes>
+        <!-- Shebang (Babashka scripts). NOTE: Nova compiles these patterns in
+             extended/verbose mode, so a literal '#' must be escaped as '\#'
+             (an unescaped '#' starts a regex comment). -->
+        <scope name="clojure.processing.shebang">
+            <expression>\A\#!.*$</expression>
+        </scope>
+
+        <!-- Line comments -->
+        <scope name="clojure.comment.line" spell-check="true">
+            <expression>(;).*$</expression>
+            <capture number="1" name="clojure.comment.line.delimiter" />
+        </scope>
+
+        <!-- Regex literals (must precede plain strings) -->
+        <scope name="clojure.regex">
+            <starts-with>
+                <expression>\#"</expression>
+            </starts-with>
+            <ends-with>
+                <expression>"</expression>
+            </ends-with>
+            <subscopes>
+                <scope name="clojure.regex.escaped">
+                    <expression>\\.</expression>
+                </scope>
+            </subscopes>
+        </scope>
+
+        <!-- Strings -->
+        <scope name="clojure.string.double">
+            <starts-with>
+                <expression>"</expression>
+            </starts-with>
+            <ends-with>
+                <expression>"</expression>
+            </ends-with>
+            <subscopes>
+                <scope name="clojure.string.escape">
+                    <expression>\\(?:[btnfr"'\\]|u[0-9a-fA-F]{4}|[0-7]{1,3})</expression>
+                </scope>
+            </subscopes>
+        </scope>
+
+        <!-- Character literals -->
+        <scope name="clojure.value.character">
+            <expression>\\(?:newline|space|tab|formfeed|backspace|return|u[0-9a-fA-F]{4}|o[0-7]{1,3}|.)</expression>
+        </scope>
+
+        <!-- Numbers (int, hex, octal, radix, ratio, float, bigint/bigdec) -->
+        <scope name="clojure.value.number">
+            <expression>(?&lt;![\w.-])[-+]?(?:0[xX][0-9a-fA-F]+|[0-9]+r[0-9a-zA-Z]+|[0-9]+/[0-9]+|[0-9]+(?:\.[0-9]*)?(?:[eE][-+]?[0-9]+)?[MN]?)(?![\w.])</expression>
+        </scope>
+
+        <!-- Booleans and nil -->
+        <scope name="clojure.value.boolean">
+            <expression>\b(?:true|false)\b</expression>
+        </scope>
+        <scope name="clojure.value.null">
+            <expression>\bnil\b</expression>
+        </scope>
+
+        <!-- Keywords, e.g. :foo, ::ns/bar -->
+        <scope name="clojure.identifier.key">
+            <expression>::?[\w.*+!?=&lt;&gt;/-]+(?:/[\w.*+!?=&lt;&gt;/-]+)?</expression>
+        </scope>
+
+        <!-- Definition forms. These carry <symbol> annotations so the defined
+             names populate Nova's Symbols list / jump bar (clojure-lsp drives
+             go-to-definition, but Nova does not consume LSP documentSymbol, so
+             the in-editor outline is grammar-driven). The leading (?<!') avoids
+             matching quoted forms. -->
+        <scope name="clojure.definition.function">
+            <symbol type="function">
+                <context behavior="start" />
+            </symbol>
+            <expression>(?&lt;!')(\()(defn-?|defmacro|defmulti|defmethod|defprotocol|defrecord|deftype|definterface)\s+([\w.*+!?=&lt;&gt;/-]+)</expression>
+            <capture number="1" name="clojure.bracket" />
+            <capture number="2" name="clojure.keyword.construct" />
+            <capture number="3" name="clojure.identifier.function.name" />
+        </scope>
+
+        <scope name="clojure.definition.variable">
+            <symbol type="variable">
+                <context behavior="start" />
+            </symbol>
+            <expression>(?&lt;!')(\()(defonce|def)\s+(?:\^[\w:{}]+\s+)?([\w.*+!?=&lt;&gt;/-]+)</expression>
+            <capture number="1" name="clojure.bracket" />
+            <capture number="2" name="clojure.keyword.construct" />
+            <capture number="3" name="clojure.identifier.variable.name" />
+        </scope>
+
+        <scope name="clojure.definition.namespace">
+            <symbol type="package">
+                <context behavior="start" />
+            </symbol>
+            <expression>(?&lt;!')(\()(ns)\s+([\w.*+!?=&lt;&gt;/-]+)</expression>
+            <capture number="1" name="clojure.bracket" />
+            <capture number="2" name="clojure.keyword.construct" />
+            <capture number="3" name="clojure.identifier.type.name" />
+        </scope>
+
+        <!-- Special forms / core constructs -->
+        <scope name="clojure.keyword.construct">
+            <expression>(?&lt;=[(\s])(?:def|defn|defn-|defmacro|defmulti|defmethod|defprotocol|defrecord|deftype|definterface|defonce|fn|let|letfn|loop|recur|do|if|if-not|if-let|when|when-not|when-let|when-first|cond|cond-&gt;|cond-&gt;&gt;|condp|case|for|doseq|dotimes|while|try|catch|finally|throw|quote|var|new|set!|ns|in-ns|require|use|import|refer|declare|binding|->|->>|some->|some->>|as->)(?=[\s)\]}])</expression>
+        </scope>
+
+        <!-- Heuristic: the first symbol after a '(' is treated as a
+             function/macro call. This is purely lexical (Nova has no LSP
+             semantic tokens), so it colors ALL call-position symbols the same;
+             unresolvable ones are still flagged separately by clojure-lsp
+             diagnostics. Placed after the special-form and def-name scopes so
+             those keep their own coloring. -->
+        <scope name="clojure.identifier.function.call">
+            <expression>(?&lt;=\()[\w.*+!?=&lt;&gt;/-]+</expression>
+        </scope>
+
+        <!-- Metadata -->
+        <scope name="clojure.keyword.operator.meta">
+            <expression>\^</expression>
+        </scope>
+
+        <!-- Reader macros / quoting punctuation -->
+        <scope name="clojure.keyword.operator.quote">
+            <expression>~@|[`'~@\#]</expression>
+        </scope>
+
+        <!-- Code folding: pair every '(' with its ')'. The definition scopes
+             above already open a *named* region for their own paren; every other
+             '(' opens an anonymous block, and every ')' closes the innermost
+             open region. Without these end markers a start context defaults to
+             extend-parent and runs to the end of the document. -->
+        <scope name="clojure.block.start">
+            <symbol type="block">
+                <context behavior="start" />
+            </symbol>
+            <expression>\(</expression>
+        </scope>
+        <scope name="clojure.block.end">
+            <symbol type="block">
+                <context behavior="end" />
+            </symbol>
+            <expression>\)</expression>
+        </scope>
+    </scopes>
+</syntax>
